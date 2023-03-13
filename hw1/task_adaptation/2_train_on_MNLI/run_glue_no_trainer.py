@@ -272,13 +272,13 @@ def main():
     # download the dataset.
     raw_datasets = load_dataset("multi_nli")
     
-    # eliminate to 10% of target (slate)
-    train_dataset = raw_datasets['train'].filter(lambda x: x["genre"] == "slate")
+    # eliminate to 10% of target (slate and travel)
+    train_dataset = raw_datasets['train'].filter(lambda x: x["genre"] == "slate" or x["genre"] == "travel")
     train_dataset = train_dataset.train_test_split(train_size=0.1)
 
     raw_datasets = DatasetDict({
         'train': train_dataset['train'],
-        'validation_matched': raw_datasets['validation_matched'].filter(lambda x: x['genre'] == 'slate'),
+        'validation_matched': raw_datasets['validation_matched'].filter(lambda x: x['genre'] == 'slate' or x['genre'] == 'travel'),
         'validation_mismatched': raw_datasets['validation_mismatched'],
     })
 
@@ -373,6 +373,7 @@ def main():
             if label_to_id is not None:
                 # Map labels to IDs (not necessary for GLUE tasks)
                 result["labels"] = [label_to_id[l] for l in examples["label"]]
+                pass
             else:
                 # In all cases, rename the column to labels because the model will expect that.
                 result["labels"] = examples["label"]
